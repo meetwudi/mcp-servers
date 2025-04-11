@@ -20,7 +20,7 @@ const server = new Server(
       resources: {},
       tools: {},
     },
-  },
+  }
 );
 
 const args = process.argv.slice(2);
@@ -45,7 +45,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
+      "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
     );
     return {
       resources: result.rows.map((row) => ({
@@ -74,7 +74,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   try {
     const result = await client.query(
       "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = $1",
-      [tableName],
+      [tableName]
     );
 
     return {
@@ -95,7 +95,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
-        name: "query",
+        name: "postgres_query",
         description: "Run a read-only SQL query",
         inputSchema: {
           type: "object",
@@ -109,7 +109,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "query") {
+  if (request.params.name === "postgres_query") {
     const sql = request.params.arguments?.sql as string;
 
     const client = await pool.connect();
@@ -126,7 +126,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       client
         .query("ROLLBACK")
         .catch((error) =>
-          console.warn("Could not roll back transaction:", error),
+          console.warn("Could not roll back transaction:", error)
         );
 
       client.release();
